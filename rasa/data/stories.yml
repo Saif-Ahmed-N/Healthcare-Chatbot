@@ -1,0 +1,7 @@
+version: "3.1"
+
+stories:
+# This file is intentionally EMPTY. 
+# Our advanced chatbot relies entirely on rules (rules.yml) and custom actions 
+# for stable, production-level dialogue management and form filling.
+# Keeping this file empty prevents conflicts and errors during training.

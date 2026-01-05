@@ -1,0 +1,327 @@
+# rasa/data/nlu.yml
+version: "3.1"
+
+nlu:
+# --- ADD THIS INTENT ---
+# - intent: session_start
+  # examples: |
+    # - /session_start
+
+# --- CORE GREETING & ORCHESTRATION ---
+- intent: greet
+  examples: |
+    - hello
+    - hi
+    - good morning
+    - hey there
+    - /greet
+
+- intent: goodbye
+  examples: |
+    - bye
+    - goodbye
+    - see you later
+    - gotta go
+
+- intent: affirm
+  examples: |
+    - yes
+    - yeah
+    - absolutely
+    - confirm
+    - /affirm
+
+- intent: deny
+  examples: |
+    - no
+    - nope
+    - never
+    - cancel that
+    - /deny
+
+- intent: show_options
+  examples: |
+    - what can you do
+    - main menu
+    - show my options
+    - go back
+    - /show_options
+
+# --- ACCOUNT FLOWS (Trigger Forms) ---
+- intent: register_user
+  examples: |
+    - I want to register
+    - I'm new here
+    - sign me up
+    - New Patient
+    - /register_user
+
+- intent: log_in_user
+  examples: |
+    - I want to log in
+    - I am an existing patient
+    - existing user
+    - Returning Patient (Login)
+    - /log_in_user
+    
+- intent: forgotten_id
+  examples: |
+    - I forgot my patient ID
+    - help me retrieve my ID
+    - look up my patient ID
+    - /forgotten_id
+
+# --- TRANSACTIONAL FLOWS ---
+- intent: book_appointment
+  examples: |
+    - I need to book an appointment
+    - schedule a visit
+    - see a doctor
+    - Book an Appointment
+    - Book Anyway
+    - Book New Appointment
+    - /book_appointment
+
+# --- NEW/UPDATED APPOINTMENT INTENTS ---
+- intent: check_appointment_status
+  examples: |
+    - check my appointments
+    - do I have any appointments?
+    - show my visits
+    - what appointments do I have
+    - Check My Appointments
+    - Appointment Status
+    - /check_appointment_status
+    - show my past appointments
+    - where are my upcoming appointments
+
+- intent: request_cancel_appointment
+  examples: |
+    - I need to cancel my appointment
+    - cancel my visit
+    - /request_cancel_appointment
+    - Cancel an Appointment
+
+- intent: inform_cancellation_reason
+  examples: |
+    - I am sick
+    - I have to travel
+    - emergency
+    - duplicate booking
+    - changed my mind
+
+# --- END NEW INTENTS ---
+
+- intent: reschedule_appointment
+  examples: |
+    - I need to change my appointment time
+    - reschedule my visit
+    
+- intent: cancel_appointment
+  examples: |
+    - cancel my appointment
+    - I need to cancel my visit
+    - /cancel_appointment
+
+# --- KNOWLEDGE & ASSISTANCE FLOWS ---
+- intent: ask_insurance
+  examples: |
+    - What does my plan cover?
+    - I have a question about my copay
+    - check my insurance
+    - Check Insurance
+    - /ask_insurance
+
+- intent: ask_medical_info
+  examples: |
+    - What are the [symptoms](medical_topic) of [flu](medical_topic)?
+    - Tell me about [hypertension](medical_topic).
+    - What are the common [side effects](medical_topic) of [ibuprofen](medical_topic)?
+    - I have a [bad cough](symptom) and a [fever](symptom)
+    - ask a health question
+    - Ask a General Question
+    - Ask Medical Info
+    - /ask_medical_info
+
+- intent: contact_physician
+  examples: |
+    - I need to message my doctor
+    - send a note to Dr. [Smith](doctor_name)
+    - contact my physician
+    - Contact My Doctor
+    - /contact_physician
+
+# --- SLOT CARRY-OVER / ENTITY INJECTION ---
+- intent: inform_name
+  examples: |
+    - My name is [Sarah Connor](patient_name)
+    - [James T Kirk](patient_name)
+    
+- intent: inform_email
+  examples: |
+    - My email is [user@example.com](patient_email)
+    - [test@test.com](patient_email)
+
+- intent: inform_phone
+  examples: |
+    - my phone number is [5551234567](patient_phone)
+    - [555-987-6543](patient_phone)
+    
+- intent: inform_doctor_name
+  examples: |
+    - I want to see Dr. [Emily Jones](doctor_name)
+    - [Dr. Chang](doctor_name)
+    - /inform_doctor_name{"doctor_name": "Dr. Anya Sharma"}
+    - /inform_doctor_name{"doctor_name": "Dr. Ben Carter"}
+    - /inform_doctor_name{"doctor_name": "Dr. Chloe Li"}
+    - /inform{"doctor_name":"Dr. Alex Ray"}
+    - /inform{"doctor_name":"Other"}
+
+- intent: skip_info
+  examples: |
+    - skip
+    - N/A
+    - I don't know
+    - no preference
+    - yes
+    - ok
+    - okay
+    - sure
+    - fine
+    - that works
+    - yes please
+    - first available
+    - Any Available Doctor
+    - /skip_info
+
+# --- MISCELLANEOUS ---
+- intent: thanks
+  examples: |
+    - thank you
+    - thanks
+    - ok thanks
+
+- intent: mood_bad
+  examples: |
+    - I feel very sad
+    - I am having a hard time
+    - I feel stressed
+    
+- intent: nlu_fallback
+  examples: |
+    - asdfghjkl
+    - qwertyuiop
+    - what in the world is that?
+
+- regex: patient_id
+  examples: |
+    - ^PID-[A-Za-z0-9]{8}$
+    - ^PID-[A-Z0-9]+$
+
+- intent: inform_patient_id
+  examples: |
+    - [PID-1234ABCD](patient_id)
+    - [PID-83630748](patient_id)
+    - [PID-E82ACCC4](patient_id)
+    - [PID-BF83CC0E](patient_id)
+    - [76FFB08C](patient_id)
+    - my id is [A053DFBD](patient_id)
+    - login with [PID-2B5B95B8](patient_id)
+    - [12345678](patient_id)
+    - [ABC123ZYX](patient_id)
+    - its [76FFB08C](patient_id)
+
+- intent: inform_time
+  examples: |
+    - 09:00
+    - 10:30
+    - 14:00
+    - 5:00 PM
+    
+- intent: confirm_payment
+  examples: |
+    - /confirm_payment{"appointment_id": 123}
+    - /confirm_payment{"appointment_id": 45}
+    - Pay Now
+
+- intent: order_medicines
+  examples: |
+    - Order Prescribed Medicines
+    - Order Medicines
+    - /order_medicines
+
+- intent: book_lab_tests
+  examples: |
+    - Book Lab Tests
+    - /book_lab_tests
+
+- intent: submit_feedback
+  examples: |
+    - 5
+    - 1
+    - 4 stars
+    
+- intent: pay_at_visit
+  examples: |
+    - /pay_at_visit{"appointment_id": 123}
+    - /pay_at_visit{"appointment_id": 45}
+    - Pay at Visit
+
+- intent: check_symptoms
+  examples: |
+    - I want to check my symptoms
+    - Can you help me figure out what's wrong?
+    - I feel sick
+    - check symptoms
+    - Check My Symptoms
+    - /check_symptoms
+
+- intent: restart_conversation
+  examples: |
+    - /restart
+    - start over
+    - restart
+
+- intent: upload_prescription
+  examples: |
+    - /upload_prescription
+    - upload script
+
+- intent: order_otc
+  examples: |
+    - /order_otc
+    - buy otc meds
+
+- intent: book_specific_lab_test
+  examples: |
+    - /book_specific_test{"test_name": "CBC"}
+    - /book_specific_test{"test_name": "Thyroid"}
+    - /book_specific_test{"test_name": "Lipid"}
+    - /book_specific_test{"test_name": "Diabetes"}
+    - /book_specific_test{"test_name": "Kidney"}
+    - /book_specific_test{"test_name": "Liver"}
+
+
+- intent: inform_upload_success
+  examples: |
+    - Uploaded medical prescription 1.jpg
+    - Uploaded file.pdf
+    - Uploaded image.png
+    - Uploaded report.pdf
+    - Uploaded 
+    - sending the prescription file
+    - here is the uploaded file
+    - /inform_upload_success
+
+- intent: trigger_upload
+  examples: |
+    - /trigger_upload_flow
+    - I want to upload a prescription
+    - upload image
+
+- intent: select_doctor_contact
+  examples: |
+    - /select_doctor_contact{"doctor_name": "Dr. Sarah"}
+    - /select_doctor_contact{"doctor_name": "Dr. John"}
+    - /select_doctor_contact
+    - I want to message Dr. Sarah

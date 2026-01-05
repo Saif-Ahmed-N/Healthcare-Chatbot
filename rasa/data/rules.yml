@@ -1,0 +1,283 @@
+version: "3.1"
+
+rules:
+# --- CORE GREETING & RESTART ---
+- rule: Greet user
+  steps:
+  - intent: greet
+  - action: utter_ask_account_type
+  - action: action_listen
+
+- rule: Handle restart/logout
+  steps:
+  - intent: restart_conversation
+  - action: action_restart_conversation
+  - action: action_restart
+
+# --- GLOBAL INTERRUPTION (Main Menu) ---
+- rule: Main Menu Interruption
+  steps:
+  - intent: show_options
+  - action: action_suggest_next_steps
+  - action: action_listen
+
+# --- REGISTRATION ---
+- rule: Activate Registration Form
+  steps:
+  - intent: register_user
+  - action: simple_info_form
+  - active_loop: simple_info_form
+
+- rule: Submit Registration Form
+  condition:
+  - active_loop: simple_info_form
+  steps:
+  - action: simple_info_form
+  - active_loop: null
+  - action: action_create_new_patient
+
+# --- LOGIN / LOOKUP ---
+- rule: Existing User Login
+  steps:
+  - intent: log_in_user
+  - action: utter_ask_patient_id
+
+- rule: Validate Patient ID
+  steps:
+  - intent: inform_patient_id
+  - action: action_login_patient
+
+- rule: Activate Lookup Form
+  steps:
+  - intent: forgotten_id
+  - action: lookup_form
+  - active_loop: lookup_form
+
+- rule: Submit Lookup Form
+  condition:
+  - active_loop: lookup_form
+  steps:
+  - action: lookup_form
+  - active_loop: null
+  - action: action_lookup_patient_id
+
+# --- APPOINTMENT BOOKING ---
+- rule: Activate Appointment Form
+  steps:
+  - intent: book_appointment
+  - action: appointment_form
+  - active_loop: appointment_form
+
+- rule: Submit Appointment Form
+  condition:
+  - active_loop: appointment_form
+  steps:
+  - action: appointment_form
+  - active_loop: null
+  - action: action_submit_appointment
+
+# --- APPOINTMENT STATUS & CANCELLATION ---
+- rule: Show Appointment Status
+  steps:
+  - intent: check_appointment_status
+  - action: action_show_appointment_menu
+
+- rule: Activate Cancellation Form
+  steps:
+  - intent: request_cancel_appointment
+  - action: cancel_form
+  - active_loop: cancel_form
+
+- rule: Submit Cancellation Form
+  condition:
+  - active_loop: cancel_form
+  steps:
+  - action: cancel_form
+  - active_loop: null
+  - action: action_submit_cancel_form
+
+# --- PAYMENT & PRE-CONSULTATION ---
+- rule: Handle Payment Confirmation
+  steps:
+  - intent: confirm_payment
+  - action: action_payment_confirmation
+  - action: symptom_form
+  - active_loop: symptom_form
+
+- rule: Submit Pre-consultation Symptom Form
+  condition:
+  - active_loop: symptom_form
+  steps:
+  - action: symptom_form
+  - active_loop: null
+  - action: action_capture_preconsultation_symptoms
+
+- rule: Handle Pay at Visit
+  steps:
+  - intent: pay_at_visit
+  - action: action_pay_at_visit
+  - action: symptom_form
+  - active_loop: symptom_form
+  
+# --- PHARMACY & LABS (FIXED SECTION) ---
+- rule: Handle Order Medicines Menu
+  steps:
+  - intent: order_medicines
+  - action: action_order_pharmacy
+
+- rule: Handle Upload Prescription Trigger
+  steps:
+  - intent: trigger_upload
+  - action: action_trigger_upload
+
+- rule: Handle Prescription Upload Success
+  steps:
+  - intent: inform_upload_success
+  - action: action_order_pharmacy # Returns to menu
+
+- rule: Handle Order OTC (Button Click)
+  steps:
+  - intent: order_otc
+  - action: action_order_otc  # <--- FIXED: Now points to the specific OTC action only
+
+- rule: Handle Book Lab Tests Menu
+  steps:
+  - intent: book_lab_tests
+  - action: action_book_lab_test
+
+- rule: Handle Specific Lab Test Selection
+  steps:
+  - intent: book_specific_lab_test
+  - action: action_submit_lab_booking
+
+- rule: Handle Specific Test Booking (Button Click)
+  steps:
+  - intent: book_test
+  - action: action_book_lab_test
+  
+- rule: Handle Feedback
+  steps:
+  - intent: submit_feedback
+  - action: action_submit_feedback
+
+# --- KNOWLEDGE FLOWS ---
+- rule: Activate Insurance Form
+  steps:
+  - intent: ask_insurance
+  - action: insurance_form
+  - active_loop: insurance_form
+
+- rule: Submit Insurance Form
+  condition:
+  - active_loop: insurance_form
+  steps:
+  - action: insurance_form
+  - active_loop: null
+  - action: action_rag_insurance_query
+
+- rule: Activate Medical Form
+  condition:
+  - active_loop: null
+  steps:
+  - intent: ask_medical_info
+  - action: medical_form
+  - active_loop: medical_form
+  
+- rule: Submit Medical Form
+  condition:
+  - active_loop: medical_form
+  steps:
+  - action: medical_form
+  - active_loop: null
+  - action: action_llm_response
+
+# --- CONTACT DOCTOR ---
+- rule: Trigger Contact Doctor Menu
+  steps:
+  - intent: contact_physician
+  - action: action_contact_doctor_menu 
+
+- rule: Start Physician Form (After Selection)
+  steps:
+  - intent: select_doctor_contact      
+  - action: physician_form             
+  - active_loop: physician_form
+  
+- rule: Submit Physician Form
+  condition:
+  - active_loop: physician_form
+  steps:
+  - action: physician_form
+  - active_loop: null
+  - action: action_send_physician_message
+
+# --- SYMPTOM CHECKER ---
+- rule: Activate Symptom Checker Form
+  condition:
+  - active_loop: null
+  steps:
+  - intent: check_symptoms
+  - action: symptom_checker_form
+  - active_loop: symptom_checker_form
+
+- rule: Submit Symptom Checker Form
+  condition:
+  - active_loop: symptom_checker_form
+  steps:
+  - action: symptom_checker_form
+  - active_loop: null
+  - action: action_run_triage
+
+# --- GENERAL & FALLBACK ---
+- rule: Mood Check
+  steps:
+  - intent: mood_bad
+  - action: utter_mood_bad_response
+  - action: action_suggest_next_steps
+
+- rule: Catchall Fallback
+  condition:
+  - active_loop: null
+  steps:
+  - intent: nlu_fallback
+  - action: action_llm_response
+
+- rule: Say thanks
+  steps:
+  - intent: thanks
+  - action: action_suggest_next_steps
+
+- rule: Say goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+# --- INTERRUPTIONS ---
+- rule: Interrupt forms
+  condition:
+  - active_loop: symptom_form
+  steps:
+  - intent: show_options
+  - action: action_suggest_next_steps
+  - action: action_listen
+
+- rule: Interrupt cancel form
+  condition:
+  - active_loop: cancel_form
+  steps:
+  - intent: show_options
+  - action: action_suggest_next_steps
+  - action: action_listen
+
+- rule: Cancel during appointment form
+  condition:
+  - active_loop: appointment_form
+  steps:
+  - intent: cancel_appointment
+  - action: action_reschedule_cancel
+  - active_loop: null
+
+- rule: Show menu after registration
+  steps:
+  - action: action_create_new_patient
+  - action: action_suggest_next_steps

@@ -1,0 +1,58 @@
+/* 1. FONTS MUST BE FIRST (Critical Fix) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+/* 2. TAILWIND DIRECTIVES */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3. PROFESSIONAL THEME VARIABLES */
+:root {
+  --primary-color: #0056b3; /* Medical Royal Blue */
+  --secondary-color: #f4f6f8; /* Clinical Light Grey */
+  --text-color: #333333;
+  --bot-msg-bg: #e3effd;
+  --user-msg-bg: #0056b3;
+}
+
+body {
+  font-family: 'Inter', sans-serif !important;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 4. FIX THE FILE INPUT */
+input[type="file"] {
+  display: none;
+}
+
+/* 5. CHAT INTERFACE STYLING */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+button {
+  font-family: 'Inter', sans-serif;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+/* Scrollbar beautification */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}

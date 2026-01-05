@@ -1,0 +1,5 @@
+# requirements-rasa.txt
+# For the Rasa server and Rasa Action server
+rasa==3.5.3
+rasa-sdk==3.5.1
+httpx==0.23.0

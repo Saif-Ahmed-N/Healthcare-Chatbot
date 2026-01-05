@@ -1,0 +1,13 @@
+# This file connects Rasa to your custom actions and other services.
+
+# --- CRITICAL FIX ---
+# This tells Rasa to send all action execution requests
+# (e.g., 'action_create_new_patient') to our *single* FastAPI
+# backend at the '/rasa/webhook' endpoint we created.
+# This ELIMINATES the old 'rasa run actions' server.
+action_endpoint:
+  url: "http://localhost:5055/webhook"
+
+# Endpoint for the Duckling entity extractor (dates, times)
+duckling:
+  url: "http://localhost:8008"

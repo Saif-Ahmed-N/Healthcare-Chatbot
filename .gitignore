@@ -1,0 +1,75 @@
+# ==========================
+# 1. SECURITY & SECRETS (CRITICAL)
+# ==========================
+.env
+backend/.env
+*.key
+*.pem
+
+# ==========================
+# 2. PYTHON (Backend & Rasa)
+# ==========================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments (Matches your folder names)
+venv-backend/
+venv-rasa/
+venv/
+env/
+.venv/
+
+# Local Databases (Don't push your actual patient data)
+*.db
+*.sqlite3
+backend/*.db
+
+# ==========================
+# 3. NODE / REACT (Frontend)
+# ==========================
+# Dependencies (Heavy folder, never push this)
+node_modules/
+frontend/node_modules/
+
+# Production Build Output
+dist/
+build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==========================
+# 4. RASA SPECIFIC
+# ==========================
+# Rasa Cache
+.rasa/
+
+# Trained Models (Large binary files, usually retrained locally)
+models/
+
+# Test Results
+results/
+
+# Reports
+reports/
+
+# ==========================
+# 5. OS & IDE FILES
+# ==========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ==========================
+# 6. MISC / JUNK
+# ==========================
+# You have a zip file in your root, don't push backups
+*.zip
+HealthcareBot.zip
+
+Healthcare Appointment Chatbot Proj.txt

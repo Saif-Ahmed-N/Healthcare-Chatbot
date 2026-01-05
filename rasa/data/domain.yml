@@ -1,0 +1,316 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - show_options
+  - register_user
+  - log_in_user
+  - forgotten_id
+  - inform_patient_id
+  - inform_email
+  - inform_name
+  - inform_phone
+  - inform_doctor_name
+  - inform_time
+  - skip_info
+  - thanks
+  - mood_bad
+  - nlu_fallback
+  - ask_medical_info
+  - book_appointment
+  - check_appointment_status
+  - reschedule_appointment
+  - cancel_appointment
+  - request_cancel_appointment
+  - inform_cancellation_reason
+  - confirm_payment
+  - pay_at_visit
+  - order_medicines
+  - upload_prescription
+  - inform_upload_success
+  - order_otc
+  - book_lab_tests
+  - book_specific_lab_test  # <--- NEW INTENT
+  - book_test
+  - submit_feedback
+  - ask_insurance
+  - contact_physician
+  - check_symptoms
+  - restart_conversation
+  - select_doctor_contact
+
+entities:
+  - patient_id
+  - patient_name
+  - patient_email
+  - patient_phone
+  - doctor_name
+  - appointment_id
+  - time
+  - test_name # <--- NEW ENTITY
+
+slots:
+  patient_id:
+    type: text
+    influence_conversation: true
+    mappings: [{type: from_entity, entity: patient_id}, {type: from_text, intent: inform_patient_id}]
+  user_name:
+    type: text
+    influence_conversation: false
+    mappings: []
+  
+  # --- REGISTRATION SLOTS ---
+  patient_name:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: simple_info_form, requested_slot: patient_name}]}]
+  patient_email:
+    type: text
+    influence_conversation: false
+    mappings: 
+      - type: from_text
+        conditions: [{active_loop: simple_info_form, requested_slot: patient_email}]
+      - type: from_text
+        conditions: [{active_loop: lookup_form, requested_slot: patient_email}]
+  patient_phone:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: simple_info_form, requested_slot: patient_phone}]}]
+  patient_age:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: simple_info_form, requested_slot: patient_age}]}]
+  patient_gender:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: simple_info_form, requested_slot: patient_gender}]}]
+  health_conditions:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: simple_info_form, requested_slot: health_conditions}]}]
+
+  # --- APPOINTMENT SLOTS ---
+  department:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: appointment_form, requested_slot: department}]}]
+  doctor_name:
+    type: text
+    influence_conversation: true
+    mappings:
+    - type: from_entity
+      entity: doctor_name
+    - type: from_text
+      conditions:
+       - active_loop: physician_form
+         requested_slot: doctor_name
+  appointment_date:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: appointment_form, requested_slot: appointment_date}]}]
+  appointment_time:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: appointment_form, requested_slot: appointment_time}]}]
+  appointment_reason:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: appointment_form, requested_slot: appointment_reason}]}]
+  consultation_mode:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: appointment_form, requested_slot: consultation_mode}]}]
+
+  # --- OTHER SLOTS ---
+  symptom_description:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: symptom_checker_form, requested_slot: symptom_description}]}]
+  medical_query:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: medical_form, requested_slot: medical_query}]}]
+  insurance_query:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: insurance_form, requested_slot: insurance_query}]}]
+  message_content:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: physician_form, requested_slot: message_content}]}]
+  appointment_to_cancel:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: cancel_form, requested_slot: appointment_to_cancel}]}]
+  cancellation_reason:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: cancel_form, requested_slot: cancellation_reason}]}]
+  preconsultation_symptoms:
+    type: text
+    influence_conversation: false
+    mappings: [{type: from_text, conditions: [{active_loop: symptom_form, requested_slot: preconsultation_symptoms}]}]
+
+forms:
+  simple_info_form:
+    required_slots: [patient_name, patient_email, patient_phone, patient_age, patient_gender, health_conditions]
+  lookup_form:
+    required_slots: [patient_email]
+  appointment_form:
+    required_slots: [department, doctor_name, appointment_reason, consultation_mode, appointment_date, appointment_time]
+  symptom_checker_form:
+    required_slots: [symptom_description]
+  medical_form:
+    required_slots: [medical_query]
+  insurance_form:
+    required_slots: [insurance_query]
+  physician_form:
+    required_slots: [doctor_name, message_content]
+  cancel_form:
+    required_slots: [appointment_to_cancel, cancellation_reason]
+  symptom_form:
+    required_slots: [preconsultation_symptoms]
+
+actions:
+  - action_create_new_patient
+  - action_lookup_patient_id
+  - validate_simple_info_form
+  - action_suggest_next_steps
+  - action_restart_conversation
+  - action_login_patient
+  - action_submit_appointment
+  - action_llm_response
+  - action_rag_insurance_query
+  - action_send_physician_message
+  - action_reschedule_cancel
+  - validate_appointment_form
+  - validate_lookup_form
+  - validate_physician_form
+  - validate_medical_form
+  - validate_insurance_form
+  - action_payment_confirmation
+  - action_capture_preconsultation_symptoms
+  - action_proactive_post_consultation
+  - action_order_pharmacy
+  - action_book_lab_test
+  - action_submit_lab_booking  # <--- NEW: Was missing
+  - action_trigger_upload      # <--- NEW: Was missing
+  - action_submit_feedback
+  - action_pay_at_visit
+  - action_run_triage
+  - validate_symptom_checker_form
+  - action_show_appointment_menu # (Used for Status/Records)
+  - action_show_status         # <--- NEW: If you renamed it
+  - action_contact_doctor_menu # <--- NEW: Was missing
+  - validate_cancel_form
+  - action_submit_cancel_form
+  - action_ask_appointment_to_cancel
+  - action_order_otc
+
+responses:
+  utter_greet:
+  - text: "Hi there! 👋 I'm your MediAssist companion. How can I help you feel better today?"
+  
+  utter_ask_account_type:
+  - text: "Have we met before, or are you a new patient?"
+    buttons:
+    - title: "I'm New Here"
+      payload: "/register_user"
+    - title: "I Have an Account"
+      payload: "/log_in_user"
+
+  utter_ask_patient_id:
+  - text: "Great! Could you enter your 8-character Patient ID? (e.g., PID-12345)"
+
+  # --- REGISTRATION ---
+  utter_ask_patient_name:
+    - text: "Let's get you set up. What is your full name?"
+  utter_ask_patient_email:
+    - text: "What's the best email address to reach you at?"
+  utter_ask_patient_phone:
+    - text: "Could you share your 10-digit mobile number for updates?"
+  utter_ask_patient_age:
+    - text: "Just for our records, how old are you?"
+  utter_ask_patient_gender:
+    - text: "How do you identify?"
+      buttons:
+      - title: "Male"
+        payload: "Male"
+      - title: "Female"
+        payload: "Female"
+      - title: "Other"
+        payload: "Other"
+  utter_ask_health_conditions:
+    - text: "Do you have any known allergies or chronic conditions we should know about? (Type 'None' if you're all clear!)"
+
+  # --- APPOINTMENT ---
+  utter_ask_department:
+    - text: "Which department would you like to visit today?"
+      buttons:
+      - title: "General Medicine"
+        payload: "General Medicine"
+      - title: "Cardiology"
+        payload: "Cardiology"
+      - title: "Dermatology"
+        payload: "Dermatology"
+      - title: "Pediatrics"
+        payload: "Pediatrics"
+      - title: "Neurology"
+        payload: "Neurology"
+
+  utter_ask_doctor_name:
+    - text: "Do you have a favorite doctor, or should I find one for you? (Type 'Any' if you don't mind)"
+
+  utter_ask_appointment_reason:
+    - text: "Could you tell me a little bit about what brings you in today?"
+
+  utter_ask_consultation_mode:
+    - text: "Would you prefer to come to the clinic or chat via video call?"
+      buttons:
+      - title: "Visit Clinic"
+        payload: "In-Person"
+      - title: "Video Chat"
+        payload: "Video Call"
+
+  utter_ask_appointment_date:
+    - text: "When would be a good day for you?"
+      custom:
+        calendar: true
+
+  utter_ask_appointment_time:
+    - text: "" # Handled by Python Action
+      custom:
+        time_picker: true
+
+  utter_ask_symptom_description:
+    - text: "I'm listening. Please describe what you're feeling in as much detail as you can."
+  
+  utter_ask_medical_query:
+    - text: "I'm here to help. What medical question is on your mind?"
+
+  utter_ask_insurance_query:
+    - text: "Sure thing. What would you like to know about your insurance?"
+
+  utter_ask_message_content:
+    - text: "Go ahead, type your message for the doctor below."
+
+  utter_goodbye:
+  - text: "Take care and feel better soon! 👋"
+  
+  utter_default_fallback:
+  - text: "Oops, I missed that. Could you say it again?"
+
+  utter_mood_bad_response:
+  - text: "I'm really sorry you're feeling that way. Please don't hesitate to see a doctor if it gets worse."
+
+  utter_ask_cancellation_reason:
+  - text: "I understand. Could you please share the reason for cancellation?"
+
+  utter_ask_appointment_to_cancel:
+  - text: "Which appointment would you like to cancel? (Please type the doctor's name)"
+
+  utter_ask_appointment_id:
+  - text: "Could you confirm the Appointment ID? (Type '1', '2', etc. from your Dashboard)"
