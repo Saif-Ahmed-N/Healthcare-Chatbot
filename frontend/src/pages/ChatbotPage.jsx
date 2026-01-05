@@ -2,7 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Flatpickr from 'react-flatpickr';
 import "flatpickr/dist/themes/airbnb.css";
-import { Send, Paperclip, LayoutDashboard, X, MessageSquare, UploadCloud, ShieldCheck, Activity, Calendar } from 'lucide-react';
+import { 
+  Send, Paperclip, LayoutDashboard, X, MessageSquare, UploadCloud, 
+  ShieldCheck, Activity, Calendar, MoreHorizontal, FileText 
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const API_URL = "http://localhost:8000/chat";
@@ -25,18 +28,15 @@ const ChatbotPage = () => {
   const [showPicker, setShowPicker] = useState(false);
   const [pickerType, setPickerType] = useState(null); 
   const [pickerOptions, setPickerOptions] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null); 
   const [showUpload, setShowUpload] = useState(false); 
   
   const chatContainerRef = useRef(null);
   const hasGreeted = useRef(false);
 
-  // --- AUTO SCROLL ---
   useEffect(() => {
     if (chatContainerRef.current) chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
   }, [messages, isTyping, showPicker, showUpload]);
 
-  // --- INITIAL GREETING ---
   useEffect(() => {
     if (!hasGreeted.current && messages.length === 0) { 
         sendMessageToBackend("/greet"); 
@@ -53,7 +53,6 @@ const ChatbotPage = () => {
       return <div dangerouslySetInnerHTML={{ __html: formatted }} />;
   };
 
-  // --- BACKEND LOGIC ---
   const sendMessageToBackend = async (messageText) => {
     setIsTyping(true); setShowPicker(false);
     try {
@@ -97,7 +96,7 @@ const ChatbotPage = () => {
     const slots = [];
     const now = new Date();
     const currentHour = now.getHours();
-    const isToday = selectedDate === now.toISOString().split('T')[0];
+    const isToday = new Date().toISOString().split('T')[0];
     for (let hour = 9; hour < 17; hour++) {
       if (!isToday || hour > currentHour) slots.push(`${hour.toString().padStart(2, '0')}:00`);
       if (!isToday || hour > currentHour) slots.push(`${hour.toString().padStart(2, '0')}:30`);
@@ -109,7 +108,7 @@ const ChatbotPage = () => {
      if (!date) return;
      const offset = date.getTimezoneOffset();
      const d = new Date(date.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
-     setSelectedDate(d); addMessage(d, "user"); sendMessageToBackend(d); 
+     addMessage(d, "user"); sendMessageToBackend(d); 
   };
 
   const handleFileUpload = async (e) => {
@@ -131,67 +130,69 @@ const ChatbotPage = () => {
 
   const handleSend = (e) => { e.preventDefault(); if(!input.trim()) return; addMessage(input, "user"); sendMessageToBackend(input); setInput(""); };
 
-  // ================= PROFESSIONAL UI RENDER =================
+  // ================= CLINICAL PRO UI =================
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#F1F5F9] font-sans antialiased p-4">
+    <div className="flex justify-center items-center min-h-screen bg-[#e2e8f0] font-sans p-4">
       
-      {/* MAIN CARD: Frameless, High Contrast, Shadow */}
-      <div className="w-full max-w-[450px] h-[95vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden relative ring-1 ring-slate-200">
+      {/* MAIN CONTAINER: Solid, Professional, Shadowed */}
+      <div className="w-full max-w-[450px] h-[90vh] bg-white rounded-lg shadow-xl flex flex-col overflow-hidden relative border border-slate-300">
         
-        {/* HEADER: Clinical Blue Gradient */}
-        <header className="h-20 bg-gradient-to-r from-[#1e40af] to-[#3b82f6] flex items-center justify-between px-6 shadow-md z-10 shrink-0">
+        {/* HEADER: Deep Navy for Authority */}
+        <header className="h-16 bg-[#0f172a] flex items-center justify-between px-6 shrink-0 z-20 shadow-md">
              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white border border-white/30">
-                    <Activity size={22} />
+                <div className="w-9 h-9 bg-teal-500 rounded flex items-center justify-center text-white shadow-sm">
+                    <Activity size={20} strokeWidth={2.5}/>
                 </div>
                 <div>
-                    <h1 className="text-xl font-bold text-white tracking-wide">MediAssist</h1>
-                    <span className="text-xs text-blue-100 font-medium flex items-center gap-1.5">
-                        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> 
-                        Secure Connection
+                    <h1 className="text-base font-bold text-white tracking-wide">MediAssist<span className="text-teal-400">Pro</span></h1>
+                    <span className="text-[10px] font-medium text-slate-300 flex items-center gap-1.5 uppercase tracking-wider">
+                        <span className="w-1.5 h-1.5 bg-teal-400 rounded-full"></span> 
+                        Active Session
                     </span>
                 </div>
              </div>
-             <Link to="/dashboard" className="p-2.5 bg-white/10 rounded-lg text-white hover:bg-white/20 transition-all duration-200 border border-white/10" title="Go to Dashboard">
-                <LayoutDashboard size={20}/>
-             </Link>
+             <div className="flex items-center gap-3">
+                <Link to="/dashboard" className="text-slate-300 hover:text-white transition-colors" title="Dashboard">
+                    <LayoutDashboard size={20}/>
+                </Link>
+                <button className="text-slate-300 hover:text-white transition-colors"><MoreHorizontal size={20}/></button>
+             </div>
         </header>
 
-        {/* CHAT MESSAGES AREA */}
-        <main ref={chatContainerRef} className="flex-1 overflow-y-auto p-5 space-y-6 bg-[#F8FAFC]">
+        {/* CHAT AREA: Clean White/Gray Contrast */}
+        <main ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#f1f5f9]">
           
-          {/* Intro Timestamp */}
-          <div className="flex justify-center">
-            <span className="px-3 py-1 bg-slate-200 text-slate-500 text-[11px] font-semibold rounded-full uppercase tracking-wider">
-                Today
+          <div className="flex justify-center pb-2">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-300 pb-1">
+                Consultation Started
             </span>
           </div>
 
           {messages.map((msg, idx) => (
-            <div key={idx} className={`flex flex-col ${msg.sender === "user" ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+            <div key={idx} className={`flex flex-col ${msg.sender === "user" ? "items-end" : "items-start"} animate-in fade-in slide-in-from-bottom-2`}>
               
-              {/* Text Bubble */}
+              {/* Message Bubble */}
               {msg.text && (
-                <div className={`max-w-[80%] px-5 py-3.5 text-[15px] leading-relaxed shadow-sm relative
+                <div className={`max-w-[85%] px-5 py-3.5 text-[15px] leading-relaxed shadow-sm font-medium
                     ${msg.sender === "user" 
-                        ? "bg-[#1e40af] text-white rounded-2xl rounded-tr-none" 
-                        : "bg-white text-slate-800 border border-slate-200 rounded-2xl rounded-tl-none"
+                        ? "bg-[#0f172a] text-white rounded-xl rounded-tr-none" 
+                        : "bg-white text-slate-800 border border-slate-200 rounded-xl rounded-tl-none"
                     }`}>
                    {renderMessageText(msg.text)}
                 </div>
               )}
 
-              {/* Bot Icon for context (Optional) */}
+              {/* Bot Identity Label */}
               {msg.sender === 'bot' && idx === messages.length - 1 && !msg.buttons && (
-                  <span className="text-[10px] text-slate-400 mt-1 ml-1">AI Assistant</span>
+                  <span className="text-[10px] text-slate-500 mt-1.5 ml-1 font-semibold">AI Assistant</span>
               )}
 
-              {/* Interactive Buttons */}
+              {/* Buttons: Clinical Teal */}
               {msg.buttons && (
-                <div className="flex flex-wrap gap-2 mt-3">
+                <div className="flex flex-wrap gap-2 mt-2">
                     {msg.buttons.map((btn, b) => (
                         <button key={b} onClick={() => { addMessage(btn.title, "user"); sendMessageToBackend(btn.payload); }} 
-                            className="px-4 py-2 bg-white border border-[#bfdbfe] text-[#1e40af] rounded-lg text-sm font-semibold shadow-sm hover:bg-[#eff6ff] hover:border-[#1e40af] transition-all duration-200 active:scale-95">
+                            className="px-4 py-2 bg-white border border-teal-100 text-teal-700 rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-teal-50 hover:border-teal-300 transition-all shadow-sm">
                             {btn.title}
                         </button>
                     ))}
@@ -200,70 +201,72 @@ const ChatbotPage = () => {
             </div>
           ))}
           
-          {/* Typing Indicator */}
           {isTyping && (
-            <div className="flex items-center gap-1 ml-1 bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-tl-none w-fit shadow-sm">
-                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-75"></div>
-                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-150"></div>
+            <div className="flex items-center gap-1 ml-1 text-slate-400 bg-white px-3 py-2 rounded-lg border border-slate-200 w-fit">
+                <span className="text-xs font-semibold mr-1">Typing</span>
+                <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce"></span>
+                <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce delay-75"></span>
+                <span className="w-1 h-1 bg-slate-400 rounded-full animate-bounce delay-150"></span>
             </div>
           )}
         </main>
 
-        {/* INPUT AREA */}
+        {/* INPUT AREA: Solid Footer */}
         <div className="bg-white border-t border-slate-200 p-5 shrink-0 z-10 relative">
            
-           {/* Upload Modal (Floating) */}
+           {/* Upload Modal */}
            {showUpload && (
-            <div className="absolute bottom-20 left-5 right-5 bg-white p-4 rounded-xl shadow-xl border border-slate-200 animate-in slide-in-from-bottom-5 z-20">
-                <div className="flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
-                    <span className="font-bold text-sm text-slate-700 flex items-center gap-2">
-                        <UploadCloud size={18} className="text-[#1e40af]"/> Upload Document
+            <div className="absolute bottom-20 left-5 right-5 bg-white p-4 rounded-lg shadow-2xl border border-slate-200 animate-in slide-in-from-bottom-2 z-20">
+                <div className="flex justify-between items-center mb-3 border-b border-slate-100 pb-2">
+                    <span className="font-bold text-xs text-slate-700 uppercase flex items-center gap-2">
+                        <UploadCloud size={16} className="text-teal-600"/> Upload Record
                     </span>
-                    <button onClick={() => setShowUpload(false)} className="text-slate-400 hover:text-slate-600 transition"><X size={18}/></button>
+                    <button onClick={() => setShowUpload(false)}><X size={16} className="text-slate-400 hover:text-slate-600"/></button>
                 </div>
-                <input type="file" onChange={handleFileUpload} className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#eff6ff] file:text-[#1e40af] hover:file:bg-[#dbeafe] cursor-pointer"/>
+                <input type="file" onChange={handleFileUpload} className="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:text-xs file:font-bold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer"/>
             </div>
            )}
            
-           {/* Options Picker (Floating) */}
+           {/* Picker Modal */}
            {showPicker && (
-            <div className="absolute bottom-20 left-5 right-5 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden animate-in slide-in-from-bottom-5 z-20">
+            <div className="absolute bottom-20 left-5 right-5 bg-white rounded-lg shadow-2xl border border-slate-200 overflow-hidden animate-in slide-in-from-bottom-2 z-20">
                <div className="flex justify-between p-3 bg-slate-50 border-b border-slate-100">
-                   <span className="font-bold text-xs text-slate-500 uppercase tracking-wider flex gap-2 items-center"><Calendar size={14}/> Select Option</span>
+                   <span className="font-bold text-xs text-slate-600 uppercase flex items-center gap-2"><Calendar size={14}/> Select Option</span>
                    <button onClick={() => setShowPicker(false)}><X size={16} className="text-slate-400 hover:text-slate-600"/></button>
                </div>
                <div className="p-3 flex flex-wrap justify-center gap-2 max-h-48 overflow-y-auto">
                   {pickerType === 'calendar' ? <Flatpickr options={{ inline: true, minDate: "today" }} onChange={handleDateSelect} /> : 
-                   pickerOptions.map(t => <button key={t} onClick={() => {addMessage(t, "user"); sendMessageToBackend(t)}} className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-md text-sm font-medium text-slate-700 hover:bg-[#1e40af] hover:text-white hover:border-[#1e40af] transition-colors">{t}</button>)}
+                   pickerOptions.map(t => <button key={t} onClick={() => {addMessage(t, "user"); sendMessageToBackend(t)}} className="px-4 py-2 bg-slate-50 border border-slate-200 rounded text-xs font-semibold text-slate-700 hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-colors">{t}</button>)}
                </div>
             </div>
            )}
            
-           {/* Main Input Field */}
+           {/* Input Bar */}
            <form onSubmit={handleSend} className="flex gap-3 items-center">
-            <button type="button" onClick={() => setShowUpload(true)} className="w-11 h-11 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:bg-[#eff6ff] hover:text-[#1e40af] transition-colors shadow-sm">
-                <Paperclip size={20} />
+            <button type="button" onClick={() => setShowUpload(true)} className="p-2.5 bg-slate-100 rounded-md text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors border border-slate-200">
+                <Paperclip size={18} />
             </button>
+            
             <div className="flex-1 relative">
                 <input 
                     type="text" 
                     value={input} 
                     onChange={(e) => setInput(e.target.value)} 
-                    placeholder="Type your health query..." 
-                    className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-[#1e40af] focus:border-transparent transition-all placeholder:text-slate-400"
+                    placeholder="Type your health concern..." 
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all placeholder:text-slate-400 font-medium"
                 />
             </div>
+            
             <button type="submit" disabled={!input.trim()} 
-                className={`w-11 h-11 rounded-full flex items-center justify-center text-white shadow-md transition-all duration-200 
-                ${input.trim() ? "bg-[#1e40af] hover:bg-[#1e3a8a] hover:scale-105" : "bg-slate-300 cursor-not-allowed"}`}>
-                <Send size={20} className={input.trim() ? "ml-0.5" : ""} />
+                className={`p-2.5 rounded-md text-white shadow-sm transition-all duration-200 
+                ${input.trim() ? "bg-teal-600 hover:bg-teal-700" : "bg-slate-300 cursor-not-allowed"}`}>
+                <Send size={18} />
             </button>
           </form>
           
           <div className="text-center mt-3">
-             <span className="text-[10px] text-slate-400 flex items-center justify-center gap-1">
-                <ShieldCheck size={10} /> Encrypted & HIPAA Compliant
+             <span className="text-[10px] font-semibold text-slate-400 flex items-center justify-center gap-1.5">
+                <ShieldCheck size={12} className="text-teal-500"/> HIPAA COMPLIANT & ENCRYPTED
              </span>
           </div>
         </div>
