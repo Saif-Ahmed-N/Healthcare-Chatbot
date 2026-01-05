@@ -18,8 +18,7 @@ def get_main_menu_buttons():
         {"title": "🧪 Book Lab Test", "payload": "/book_lab_tests"},
         {"title": "📂 My Records (Status)", "payload": "/check_appointment_status"},
         {"title": "💊 Pharmacy / Upload Rx", "payload": "/order_medicines"},
-        {"title": "👨‍⚕️ Contact Doctor", "payload": "/contact_physician"},
-        {"title": "👋 Logout", "payload": "/restart"}
+        {"title": "👨‍⚕️ Contact Doctor", "payload": "/contact_physician"}
     ]
 
 # -------------------------------------------------------------------------
